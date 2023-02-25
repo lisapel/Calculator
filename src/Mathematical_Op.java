@@ -7,7 +7,10 @@ public class Mathematical_Op {
     final Operands division = (a, b) -> a / b;
     final Operands modulus = (a, b) -> a % b;
     final Operands multiplication = (a, b) -> a * b;
+    final Operands pow = Math::pow;
 
+
+    //TODO add more functions
 
     protected double evaluate(double a, double b, Tokens token) {
         switch (token) {
@@ -25,6 +28,12 @@ public class Mathematical_Op {
             }
             case sub -> {
                 return subtraction.operate(a, b);
+            }
+            case sqrt -> {
+                return Math.sqrt(a);
+            }
+            case pow -> {
+                return pow.operate(a,b);
             }
             default -> {
                 return 0.0;

@@ -5,7 +5,9 @@ public enum Tokens {
     mul,
     mod,
     parO,
-    parC;
+    parC,
+    pow,
+    sqrt;
 
 
 
@@ -19,6 +21,8 @@ public enum Tokens {
             case div -> "/";
             case parO -> "(";
             case parC -> ")";
+            case sqrt -> "√";
+            case pow -> "a^b";
         };
     }
 
@@ -31,6 +35,8 @@ public enum Tokens {
             case "/" -> Tokens.div;
             case "(" -> Tokens.parO;
             case ")" -> Tokens.parC;
+            case "√" -> Tokens.sqrt;
+            case "a^b" -> Tokens.pow;
             default -> Tokens.fromString(s);
         };
     }

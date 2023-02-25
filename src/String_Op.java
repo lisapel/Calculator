@@ -13,13 +13,11 @@ public class String_Op {
 
 
     protected String parseExpression(String expression) {
-        String[] tokens = expression.split("(?<=[-+*/%])|(?=[-+*/%])");
+        String[] tokens = expression.split("(?<=[-+*/%√a^b])|(?=[-+*/%√a^b])");
 
         Deque<Double> deq = new ArrayDeque<>();
         for (String t : tokens) {
-            if (!isOperator(t)) {
-                deq.push(Double.parseDouble(t.replaceAll(",",".")));
-            }
+            if (!isOperator(t)) deq.push(Double.parseDouble(t.replaceAll(",", ".")));
         }
         for (String t : tokens) {
             if (isOperator(t)) {
@@ -28,7 +26,9 @@ public class String_Op {
                 double res = mathematical_op.evaluate(op1, op2, Tokens.fromString(t));
                 deq.push(res);
             }
-
+            //TODO ordningsföljd matematisk
+            //TODO krävs bara en siffra för sqrt
+            //TODO pow tecken
         }
         return String.valueOf(deq.pop());
 
@@ -36,9 +36,8 @@ public class String_Op {
 
     protected boolean isOperator(String token) {
         return switch (token) {
-            case "+", "-", "/", "%", "*" -> true;
+            case "+", "-", "/", "%", "*","(",")","√","a^b" -> true;
             default -> false;
         };
     }
 }
-//TODO ordningsföljd matematisk

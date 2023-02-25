@@ -12,6 +12,12 @@ public class GUI extends JFrame{
     JPanel math = new JPanel(new GridLayout(4,0));
     JPanel buttonPanel = new JPanel(new GridLayout(3,3));
     JPanel math2 = new JPanel(new GridLayout(3,0));
+    JPanel math3 = new JPanel(new GridLayout(0,4));
+
+    JButton par1 = new JButton("(");
+    JButton par2 = new JButton(")");
+    JButton pow = new JButton("a^b");
+    JButton sqrt = new JButton("√");
     JButton equals = new JButton("=");
     JButton zero = new  JButton("0");
     JButton comma = new JButton(",");
@@ -45,9 +51,12 @@ public class GUI extends JFrame{
             button.setBackground(Color.darkGray);
             button.setForeground(Color.WHITE);
         }
-
+    }
+    void setTextOnDisplay(JButton button){
+        textField.setText(textField.getText()+ button.getText());
     }
 
+    //TODO nytt sett knappar med pow, paranteser osv
     void createCalculator(){
 
         frame.add(mainPanel);
@@ -55,15 +64,15 @@ public class GUI extends JFrame{
         for (JButton button: createNumericButtons()){
             buttonPanel.add(button);
             setColors(button,1);
-            button.addActionListener(e->textField.setText(textField.getText()+ button.getText()));
+            button.addActionListener(e->setTextOnDisplay(button));
         }
         buttonPanel.add(zero);
-        zero.addActionListener(e->textField.setText(textField.getText()+ zero.getText()));
+        zero.addActionListener(e->setTextOnDisplay(zero));
         setColors(zero,1);
         zero.setBorder(BorderFactory.createLineBorder(Color.white));
         buttonPanel.add(equals);
         buttonPanel.add(comma);
-        comma.addActionListener((e->textField.setText(textField.getText()+ comma.getText())));
+        comma.addActionListener(e->setTextOnDisplay(comma));
         setColors(equals,0);
         setColors(comma,0);
         equals.addActionListener(e->{
@@ -76,7 +85,7 @@ public class GUI extends JFrame{
             math.add(button);
             button.setBackground(Color.DARK_GRAY);
             button.setForeground(Color.white);
-            button.addActionListener(e->textField.setText(textField.getText()+button.getText()));
+            button.addActionListener(e->setTextOnDisplay(button));
 
         }
         math2.add(reverse);
@@ -98,12 +107,28 @@ public class GUI extends JFrame{
         Border border = BorderFactory.createLineBorder(Color.darkGray,5,true);
         textField.setBorder(border);
 
+        math3.add(pow);
+        math3.add(sqrt);
+        math3.add(par1);
+        math3.add(par2);
+        setColors(pow,0);
+        setColors(sqrt,0);
+        setColors(par1,0);
+        setColors(par2,0);
+
+        pow.addActionListener(e->setTextOnDisplay(pow));
+        sqrt.addActionListener(e->setTextOnDisplay(sqrt));
+        par1.addActionListener(e->setTextOnDisplay(par1));
+        par2.addActionListener(e->setTextOnDisplay(par2));
+
         mainPanel.add(textField,BorderLayout.NORTH);
         mainPanel.add(buttonPanel,BorderLayout.CENTER);
         mainPanel.add(math2,BorderLayout.WEST);
         mainPanel.add(math,BorderLayout.EAST);
+        mainPanel.add(math3,BorderLayout.SOUTH);
+        mainPanel.setSize(500,400);
 
-        frame.setSize(450,300);
+        frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
