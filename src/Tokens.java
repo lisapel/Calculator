@@ -22,7 +22,7 @@ public enum Tokens {
             case parO -> "(";
             case parC -> ")";
             case sqrt -> "√";
-            case pow -> "a^b";
+            case pow -> "^";
         };
     }
 
@@ -36,7 +36,7 @@ public enum Tokens {
             case "(" -> Tokens.parO;
             case ")" -> Tokens.parC;
             case "√" -> Tokens.sqrt;
-            case "a^b" -> Tokens.pow;
+            case "^" -> Tokens.pow;
             default -> Tokens.fromString(s);
         };
     }
