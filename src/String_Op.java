@@ -15,26 +15,46 @@ public class String_Op {
     protected String parseExpressionToTokens(String expression) {
         String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
         Deque<Operators> operators = new ArrayDeque<>();
-        Deque<Double> numbers = getNumbers(tokens);
+        Deque<Double> numbers = new ArrayDeque<>();
 
         for (String t : tokens) {
             if (isOperator(t)) {
                 operators.push(Operators.fromString(t));
-            }
+            }else if(!isOperator(t)){
+                numbers.push(Double.parseDouble(t));
+            }}
+        for (String t:tokens){
             if (t.equals(Operators.parC.toString())) {
                parseWithinParentheses(operators,numbers);
-                if (operators.isEmpty() && numbers.size()>1){
-                    handleRemainingNumbers(numbers);
-                }
+
             }
         }
         while (!operators.isEmpty()) {
-           parseRest(numbers,operators);
+            parseTheRest(numbers,operators);
+        }
+        if (numbers.size()> 1){
+            handleRemainingNumbers(numbers);
         }
         return String.valueOf(numbers.pop());
     }
 
-    void parseRest(Deque<Double>numbers,Deque<Operators>operators){
+    void parseWithinParentheses(Deque<Operators> operators, Deque<Double>numbers){
+        operators.pop();
+        while (operators.peek() != Operators.parO && operators.peek()!=Operators.parC) {
+            double op2 = numbers.pop();
+            double op1 = numbers.pop();
+            double res = mathematical_op.evaluate(op1, op2, operators.pop());
+            numbers.addLast(res);
+        }
+        operators.pop();
+
+    }
+    void handleRemainingNumbers(Deque<Double>numbers){
+        double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
+        numbers.addLast(res);
+
+    }
+    void parseTheRest(Deque<Double>numbers, Deque<Operators> operators){
         Operators op = operators.pop();
 
         if (op == Operators.sqrt) {
@@ -55,21 +75,6 @@ public class String_Op {
             double res = mathematical_op.evaluate(op1, op2, op);
             numbers.push(res);
         }
-    }
-    void parseWithinParentheses(Deque<Operators> operators, Deque<Double>numbers){
-        operators.pop();
-        while (operators.peek() != Operators.parO) {
-            double op2 = numbers.pop();
-            double op1 = numbers.pop();
-            double res = mathematical_op.evaluate(op1, op2, operators.pop());
-            numbers.addLast(res);
-        }
-        operators.pop();
-    }
-    void handleRemainingNumbers(Deque<Double>numbers){
-        double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
-        numbers.addLast(res);
-
     }
     Deque<Double> getNumbers(String[] tokens) {
         Deque<Double> numbers = new ArrayDeque<>();
