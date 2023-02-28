@@ -19,20 +19,6 @@ public enum Operators {
         return precedence;
     }
 
-    @Override
-    public String toString() {
-        return switch (this) {
-            case add ->  "+";
-            case sub -> "-";
-            case mul -> "*";
-            case mod -> "%";
-            case div -> "/";
-            case parO -> "(";
-            case parC -> ")";
-            case sqrt -> "√";
-            case pow -> "^";
-        };
-    }
 
     public static Operators fromString(String s){
         return switch (s) {
