@@ -35,8 +35,7 @@ public class String_Op {
                 while (!numbers.isEmpty() &&
                         op != Operators.parO) {
                     assert operators.peekLast() != null;
-                    if (!(op.getPrecedence()
-                                            <= operators.peekLast().getPrecedence())) break;
+                    if (!(op.getPrecedence() <= operators.peekLast().getPrecedence())) break;
                     double op2 = numbers.pop();
                     double op1 = numbers.pop();
                     double res = mathematical_op.evaluate(op1, op2, operators.pop());
@@ -48,6 +47,12 @@ public class String_Op {
                 double res = mathematical_op.evaluate(op1, op2, op);
                 numbers.push(res);
             }
+        }
+        if (numbers.size()>1){
+            double op2 = numbers.pop();
+            double op1 = numbers.pop();
+            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
+            numbers.push(res);
         }
         return String.valueOf(numbers.pop());
     }
