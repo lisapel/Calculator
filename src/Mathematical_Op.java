@@ -1,4 +1,5 @@
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Mathematical_Op {
 
@@ -12,7 +13,7 @@ public class Mathematical_Op {
 
     //TODO add more functions
 
-    protected double evaluate(double a, double b, Tokens token) {
+    protected double evaluate(double a, double b, Operators token) {
         switch (token) {
             case add -> {
                 return addition.operate(a, b);
@@ -40,6 +41,7 @@ public class Mathematical_Op {
             }
         }
     }
+
 }
 
 

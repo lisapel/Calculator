@@ -13,35 +13,63 @@ public class String_Op {
 
 
     protected String parseExpression(String expression) {
-        String[] tokens = expression.split("(?<=[-+*/%√^])|(?=[-+*/%√^])");
+        String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
+        Deque<Operators> operators = new ArrayDeque<>();
+        Deque<Double> numbers = getNumbers(tokens);
 
-        Deque<Double> deq = new ArrayDeque<>();
-        for (String t : tokens) {
-            if (!isOperator(t)) deq.push(Double.parseDouble(t.replaceAll(",", ".")));
-        }
         for (String t : tokens) {
             if (isOperator(t)) {
-                if (t.equals(Tokens.sqrt.toString())){
-                    double op = deq.pop();
-                    double res = mathematical_op.evaluate(op,0,Tokens.sqrt);
-                    deq.push(res);
-                }else{
-                    double op2 = deq.pop();
-                    double op1 = deq.pop();
-                    double res = mathematical_op.evaluate(op1, op2, Tokens.fromString(t));
-                    deq.push(res);
-                }
-
+                operators.push(Operators.fromString(t));
             }
-            //TODO ordningsföljd matematisk
+            if (t.equals(Operators.parC.toString())) {
+                operators.pop();
+                while (operators.peek() != Operators.parO) {
+                    double op2 = numbers.pop();
+                    double op1 = numbers.pop();
+                    double res = mathematical_op.evaluate(op1, op2, operators.pop());
+                    numbers.addLast(res);
+                }
+                operators.pop();
+                if (operators.isEmpty() && numbers.size()>1){
+                    double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
+                    numbers.addLast(res);
+                }
+            }
         }
-        return String.valueOf(deq.pop());
+        while (!operators.isEmpty()) {
+            Operators op = operators.pop();
 
+            if (op == Operators.sqrt) {
+                double res = mathematical_op.evaluate(numbers.pop(), 0, op);
+                numbers.push(res);
+            } else if (operators.size() > 1) {
+                while (!numbers.isEmpty() && op != Operators.parO && op.getPrecedence() <= operators.peekLast().getPrecedence()) {
+                    double op2 = numbers.pop();
+                    double op1 = numbers.pop();
+                    double res = mathematical_op.evaluate(op1, op2, operators.pop());
+                    numbers.push(res);
+                }
+            } else {
+                double op2 = numbers.pop();
+                double op1 = numbers.pop();
+                double res = mathematical_op.evaluate(op1, op2, op);
+                numbers.push(res);
+            }
+        }
+        return String.valueOf(numbers.pop());
+    }
+
+    Deque<Double> getNumbers(String[] tokens) {
+        Deque<Double> numbers = new ArrayDeque<>();
+        for (String t : tokens) {
+            if (!isOperator(t)) numbers.push(Double.parseDouble(t.replaceAll(",", ".")));
+        }
+        return numbers;
     }
 
     protected boolean isOperator(String token) {
         return switch (token) {
-            case "+", "-", "/", "%", "*","(",")","√","^" -> true;
+            case "+", "-", "/", "%", "*", "(", ")", "√", "^" -> true;
             default -> false;
         };
     }
