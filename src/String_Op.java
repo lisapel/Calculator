@@ -29,27 +29,12 @@ public class String_Op {
             }
         }
         while (!operators.isEmpty()) {
-            parseTheRest(numbers,operators);
+           parseRest(numbers,operators);
         }
         return String.valueOf(numbers.pop());
     }
 
-    void parseWithinParentheses(Deque<Operators> operators, Deque<Double>numbers){
-        operators.pop();
-        while (operators.peek() != Operators.parO) {
-            double op2 = numbers.pop();
-            double op1 = numbers.pop();
-            double res = mathematical_op.evaluate(op1, op2, operators.pop());
-            numbers.addLast(res);
-        }
-        operators.pop();
-    }
-    void handleRemainingNumbers(Deque<Double>numbers){
-        double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
-        numbers.addLast(res);
-
-    }
-    void parseTheRest(Deque<Double>numbers, Deque<Operators> operators){
+    void parseRest(Deque<Double>numbers,Deque<Operators>operators){
         Operators op = operators.pop();
 
         if (op == Operators.sqrt) {
@@ -70,6 +55,21 @@ public class String_Op {
             double res = mathematical_op.evaluate(op1, op2, op);
             numbers.push(res);
         }
+    }
+    void parseWithinParentheses(Deque<Operators> operators, Deque<Double>numbers){
+        operators.pop();
+        while (operators.peek() != Operators.parO) {
+            double op2 = numbers.pop();
+            double op1 = numbers.pop();
+            double res = mathematical_op.evaluate(op1, op2, operators.pop());
+            numbers.addLast(res);
+        }
+        operators.pop();
+    }
+    void handleRemainingNumbers(Deque<Double>numbers){
+        double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
+        numbers.addLast(res);
+
     }
     Deque<Double> getNumbers(String[] tokens) {
         Deque<Double> numbers = new ArrayDeque<>();
