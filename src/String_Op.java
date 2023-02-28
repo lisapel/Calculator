@@ -76,13 +76,6 @@ public class String_Op {
             numbers.push(res);
         }
     }
-    Deque<Double> getNumbers(String[] tokens) {
-        Deque<Double> numbers = new ArrayDeque<>();
-        for (String t : tokens) {
-            if (!isOperator(t)) numbers.push(Double.parseDouble(t.replaceAll(",", ".")));
-        }
-        return numbers;
-    }
 
     protected boolean isOperator(String token) {
         return switch (token) {

@@ -33,15 +33,16 @@ public class Mathematical_Op {
                 return Math.sqrt(a);
             }
             case pow -> {
-                return pow.operate(a,b);
+                return pow.operate(a, b);
             }
             default -> {
                 return 0.0;
             }
         }
     }
-
 }
+
+
 
 
 
