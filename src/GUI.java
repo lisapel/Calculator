@@ -26,6 +26,10 @@ public class GUI extends JFrame {
     final JButton reverse = new JButton("<-");
     final JButton deleteAll = new JButton("C");
 
+    GUI(){
+        createCalculator();
+    }
+
     List<JButton> createNumericButtons() {
         List<JButton> b = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
@@ -78,7 +82,7 @@ public class GUI extends JFrame {
         comma.addActionListener(e -> setTextOnDisplay(comma));
         setColors(equals, 0);
         setColors(comma, 0);
-        equals.addActionListener(e -> textField.setText(o.parseExpression(String.valueOf(textField.getText()))));
+        equals.addActionListener(e -> textField.setText(o.parseExpressionToTokens(String.valueOf(textField.getText()))));
 
 
         for (JButton button : createMathematicalButtons()) {
@@ -117,7 +121,7 @@ public class GUI extends JFrame {
         pow.addActionListener(e -> setTextOnDisplay(pow));
         sqrt.addActionListener(e -> {
             setTextOnDisplay(sqrt);
-            textField.setText(o.parseExpression(String.valueOf(textField.getText())));
+            textField.setText(o.parseExpressionToTokens(String.valueOf(textField.getText())));
         });
         par1.addActionListener(e -> setTextOnDisplay(par1));
         par2.addActionListener(e -> setTextOnDisplay(par2));
@@ -136,7 +140,7 @@ public class GUI extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    textField.setText(o.parseExpression(String.valueOf(textField.getText())));
+                    textField.setText(o.parseExpressionToTokens(String.valueOf(textField.getText())));
                 }
             }
         });
