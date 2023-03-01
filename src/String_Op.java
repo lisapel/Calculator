@@ -15,16 +15,31 @@ public class String_Op {
     protected String parseExpressionToTokens(String expression) {
         String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
         Deque<Operators> operators = new ArrayDeque<>();
-        Deque<Double> numbers = getNumbers(tokens);
+        Deque<Double> numbers = new ArrayDeque<>();
+        Deque<Double> result = new ArrayDeque<>();
 
         for (String t : tokens) {
             if (isOperator(t)) {
                 operators.push(Operators.fromString(t));
+            } else if (!isOperator(t)) {
+                numbers.push(Double.parseDouble(t));
             }
             if (t.equals(Operators.parC.toString())) {
-                parseParentheses(operators,numbers);
+                operators.pop();
+                while (operators.peek() != Operators.parO) {
+                    double op2 = numbers.pop();
+                    double op1 = numbers.pop();
+                    double res = mathematical_op.evaluate(op1, op2, operators.pop());
+                    result.push(res);
+                    if (numbers.size()==1){
+                        handleNumberOutsideParentheses(numbers,result);
+                    }
+                }
+                operators.pop();
             }
         }
+        result.forEach(numbers::push);
+
         while (!operators.isEmpty()) {
             Operators op = operators.pop();
 
@@ -49,25 +64,21 @@ public class String_Op {
             }
         }
         while (numbers.size()>1){
-            double op2 = numbers.pop();
-            double op1 = numbers.pop();
-            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
+            double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
             numbers.push(res);
         }
+
+        //TODO tal som 2+3(3*2)
+
         return String.valueOf(numbers.pop());
     }
-    void parseParentheses(Deque<Operators>operators, Deque<Double>numbers){
-        operators.pop();
-        while (operators.peek() != Operators.parO) {
+
+    void handleNumberOutsideParentheses(Deque<Double>numbers, Deque<Double>result){
             double op2 = numbers.pop();
-            double op1 = numbers.pop();
-            double res = mathematical_op.evaluate(op1, op2, operators.pop());
-            numbers.addLast(res);
-        }
-
-        operators.pop();
+            double op1 = result.pop();
+            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
+            result.push(res);
     }
-
     Deque<Double> getNumbers(String[] tokens) {
         Deque<Double> numbers = new ArrayDeque<>();
         for (String t : tokens) {
