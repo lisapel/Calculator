@@ -48,7 +48,7 @@ public class String_Op {
                 numbers.push(res);
             }
         }
-        if (numbers.size()>1){
+        while (numbers.size()>1){
             double op2 = numbers.pop();
             double op1 = numbers.pop();
             double res = mathematical_op.evaluate(op1, op2, Operators.mul);
@@ -64,6 +64,7 @@ public class String_Op {
             double res = mathematical_op.evaluate(op1, op2, operators.pop());
             numbers.addLast(res);
         }
+
         operators.pop();
     }
 
