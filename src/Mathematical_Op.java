@@ -37,10 +37,10 @@ public class Mathematical_Op {
             }
         }
     }
-    boolean hasHigherPrecedence(Operators op1, Operators op2){
-        return op1.getPrecedence()>op2.getPrecedence();
+   protected boolean hasPrecedence(Operators op1, Operators op2){
+        return op1.getPrecedence()<op2.getPrecedence();
     }
-    double operate(Deque<Double> numbers,Deque<Operators>operators){
+   protected double operate(Deque<Double> numbers,Deque<Operators>operators){
         double b = numbers.pop();
         double a = numbers.pop();
         return evaluate(a,b,operators.pop());

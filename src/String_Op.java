@@ -9,7 +9,11 @@ public class String_Op {
     private final Mathematical_Op mathematical_op = new Mathematical_Op();
 
     protected String deleteChar(String text) {
-        return text.substring(0, text.length() - 1);
+        if (text.length() > 0) {
+            return text.substring(0, text.length() - 1);
+        } else {
+            return "";
+        }
     }
 
     protected String deleteAll(String text) {
@@ -45,9 +49,9 @@ public class String_Op {
                 }
             }
         }
-        result.forEach(numbers::push);
+
         while (!result.isEmpty()) {
-            result.pop();
+            numbers.addLast(result.pop());
         }
 
         while (!operators.isEmpty()) {
@@ -58,7 +62,7 @@ public class String_Op {
             } else if (operators.size() > 1) {
                 while (!numbers.isEmpty() && op != Operators.parO) {
                     assert operators.peekLast() != null;
-                    if (!(mathematical_op.hasHigherPrecedence(op, operators.peekLast()))) break;
+                    if ((mathematical_op.hasPrecedence(op, operators.peekLast()))) break;
                     numbers.push(mathematical_op.operate(numbers, operators));
                 }
             } else {
@@ -75,7 +79,7 @@ public class String_Op {
     }
 
 
-    void handleNumberOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
+   protected void handleNumberOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
         if (numbers.size() == 1) {
             double op2 = numbers.pop();
             double op1 = result.pop();
