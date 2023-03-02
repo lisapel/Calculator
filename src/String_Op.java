@@ -3,11 +3,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class String_Op {
-    protected Deque<Operators> operators = new ArrayDeque<>();
-    protected Deque<Double> numbers = new ArrayDeque<>();
+    private final Deque<Operators> operators = new ArrayDeque<>();
+    private final Deque<Double> numbers = new ArrayDeque<>();
     private final Stack<Double> result = new Stack<>();
-
-    final Mathematical_Op mathematical_op = new Mathematical_Op();
+    private final Mathematical_Op mathematical_op = new Mathematical_Op();
 
     protected String deleteChar(String text) {
         return text.substring(0, text.length() - 1);
@@ -25,8 +24,8 @@ public class String_Op {
             return String.valueOf(parseAndEvaluate(tokens));
         }
     }
-    protected Double parseAndEvaluate(String[] tokens) {
 
+    protected Double parseAndEvaluate(String[] tokens) {
         for (String t : tokens) {
             if (isOperator(t)) {
                 operators.push(Operators.fromString(t));
@@ -47,7 +46,7 @@ public class String_Op {
             }
         }
         result.forEach(numbers::push);
-        while (!result.isEmpty()){
+        while (!result.isEmpty()) {
             result.pop();
         }
 
@@ -55,8 +54,7 @@ public class String_Op {
             Operators op = operators.pop();
 
             if (op == Operators.sqrt) {
-                double res = mathematical_op.evaluate(numbers.pop(), 0, op);
-                numbers.push(res);
+                numbers.push(mathematical_op.evaluate(numbers.pop(), 0, op));
             } else if (operators.size() > 1) {
                 while (!numbers.isEmpty() && op != Operators.parO) {
                     assert operators.peekLast() != null;
@@ -66,33 +64,29 @@ public class String_Op {
             } else {
                 double op2 = numbers.pop();
                 double op1 = numbers.pop();
-                double res = mathematical_op.evaluate(op1, op2, op);
-                numbers.push(res);
+                numbers.push(mathematical_op.evaluate(op1, op2, op));
             }
         }
         while (numbers.size() > 1) {
-            double res = mathematical_op.evaluate(numbers.pop(), numbers.pop(), Operators.mul);
-            numbers.push(res);
+            numbers.push(mathematical_op.evaluate(numbers.pop(), numbers.pop(), Operators.mul));
         }
 
         return numbers.pop();
     }
 
+
     void handleNumberOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
         if (numbers.size() == 1) {
             double op2 = numbers.pop();
             double op1 = result.pop();
-            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
-            result.push(res);
+            result.push(mathematical_op.evaluate(op1, op2, Operators.mul));
         } else if (operators.size() > 1) {
             operators.pop();
             double op2 = numbers.pop();
             double op1 = result.pop();
-            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
-            result.push(res);
+            result.push(mathematical_op.evaluate(op1, op2, Operators.mul));
             double op3 = numbers.pop();
-            double res2 = mathematical_op.evaluate(op3, result.pop(), operators.pop());
-            result.push(res2);
+            result.push(mathematical_op.evaluate(op3, result.pop(), operators.pop()));
         }
     }
 
