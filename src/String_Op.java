@@ -1,6 +1,12 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class String_Op {
+    protected Deque<Operators> operators = new ArrayDeque<>();
+    protected Deque<Double> numbers = new ArrayDeque<>();
+    private final Stack<Double> result = new Stack<>();
+
     final Mathematical_Op mathematical_op = new Mathematical_Op();
 
     protected String deleteChar(String text) {
@@ -11,12 +17,15 @@ public class String_Op {
         return text.substring(0, 0);
     }
 
-
     protected String parseExpressionToTokens(String expression) {
         String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
-        Deque<Operators> operators = new ArrayDeque<>();
-        Deque<Double> numbers = new ArrayDeque<>();
-        Stack<Double> result = new Stack<>();
+        if (containsInvalidTokens(tokens)) {
+            return "Invalid tokens";
+        } else {
+            return String.valueOf(parseAndEvaluate(tokens));
+        }
+    }
+    protected Double parseAndEvaluate(String[] tokens) {
 
         for (String t : tokens) {
             if (isOperator(t)) {
@@ -27,20 +36,20 @@ public class String_Op {
             if (t.equals(Operators.parC.toString())) {
                 operators.pop();
                 while (!operators.isEmpty() && operators.peek() != Operators.parO) {
-                    double op2 = numbers.pop();
-                    double op1 = numbers.pop();
-                    double res = mathematical_op.evaluate(op1, op2, operators.pop());
-                    result.push(res);
-                    if (numbers.size()>=1){
-                        handleNumberOutsideParentheses(numbers,result,operators);
+                    result.push(mathematical_op.operate(numbers, operators));
+                    if (numbers.size() >= 1) {
+                        handleNumberOutsideParentheses(numbers, result, operators);
                     }
                 }
-                if(!operators.isEmpty()){
+                if (!operators.isEmpty()) {
                     operators.pop();
                 }
             }
         }
         result.forEach(numbers::push);
+        while (!result.isEmpty()){
+            result.pop();
+        }
 
         while (!operators.isEmpty()) {
             Operators op = operators.pop();
@@ -49,14 +58,10 @@ public class String_Op {
                 double res = mathematical_op.evaluate(numbers.pop(), 0, op);
                 numbers.push(res);
             } else if (operators.size() > 1) {
-                while (!numbers.isEmpty() &&
-                        op != Operators.parO) {
+                while (!numbers.isEmpty() && op != Operators.parO) {
                     assert operators.peekLast() != null;
-                    if (!(op.getPrecedence() <= operators.peekLast().getPrecedence())) break;
-                    double op2 = numbers.pop();
-                    double op1 = numbers.pop();
-                    double res = mathematical_op.evaluate(op1, op2, operators.pop());
-                    numbers.push(res);
+                    if (!(mathematical_op.hasHigherPrecedence(op, operators.peekLast()))) break;
+                    numbers.push(mathematical_op.operate(numbers, operators));
                 }
             } else {
                 double op2 = numbers.pop();
@@ -65,49 +70,43 @@ public class String_Op {
                 numbers.push(res);
             }
         }
-        while (numbers.size()>1){
-            double res = mathematical_op.evaluate(numbers.pop(),numbers.pop(),Operators.mul);
+        while (numbers.size() > 1) {
+            double res = mathematical_op.evaluate(numbers.pop(), numbers.pop(), Operators.mul);
             numbers.push(res);
         }
 
-        //TODO tal som 2+3(3*2)
-
-        return String.valueOf(numbers.pop());
+        return numbers.pop();
     }
 
-    void handleNumberOutsideParentheses(Deque<Double>numbers, Stack<Double>result, Deque<Operators>operators){
-        if(numbers.size()==1) {
+    void handleNumberOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
+        if (numbers.size() == 1) {
             double op2 = numbers.pop();
             double op1 = result.pop();
             double res = mathematical_op.evaluate(op1, op2, Operators.mul);
             result.push(res);
-        }else if (numbers.size()>1 && operators.size()>1) {
+        } else if (operators.size() > 1) {
             operators.pop();
             double op2 = numbers.pop();
             double op1 = result.pop();
             double res = mathematical_op.evaluate(op1, op2, Operators.mul);
             result.push(res);
             double op3 = numbers.pop();
-            double res2 = mathematical_op.evaluate(op3,result.pop(),operators.pop());
+            double res2 = mathematical_op.evaluate(op3, result.pop(), operators.pop());
             result.push(res2);
-
-
         }
     }
-    Deque<Double> getNumbers(String[] tokens) {
-        Deque<Double> numbers = new ArrayDeque<>();
-        for (String t : tokens) {
-            if (!isOperator(t)) numbers.push(Double.parseDouble(t.replaceAll(",", ".")));
-        }
-        return numbers;
-    }
-
-
 
     protected boolean isOperator(String token) {
         return switch (token) {
             case "+", "-", "/", "%", "*", "(", ")", "√", "^" -> true;
             default -> false;
         };
+    }
+
+    protected boolean containsInvalidTokens(String[] tokens) {
+        String pattern = "[0-9-+*/%√^()]";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(Arrays.toString(tokens));
+        return !m.find();
     }
 }

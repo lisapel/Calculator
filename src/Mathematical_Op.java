@@ -1,4 +1,4 @@
-
+import java.util.Deque;
 
 public class Mathematical_Op {
 
@@ -8,9 +8,6 @@ public class Mathematical_Op {
     final Operands modulus = (a, b) -> a % b;
     final Operands multiplication = (a, b) -> a * b;
     final Operands pow = Math::pow;
-
-
-    //TODO add more functions
 
     protected double evaluate(double a, double b, Operators token) {
         switch (token) {
@@ -40,6 +37,15 @@ public class Mathematical_Op {
             }
         }
     }
+    boolean hasHigherPrecedence(Operators op1, Operators op2){
+        return op1.getPrecedence()>op2.getPrecedence();
+    }
+    double operate(Deque<Double> numbers,Deque<Operators>operators){
+        double b = numbers.pop();
+        double a = numbers.pop();
+        return evaluate(a,b,operators.pop());
+    }
+
 }
 
 
