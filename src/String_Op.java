@@ -16,7 +16,7 @@ public class String_Op {
         String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
         Deque<Operators> operators = new ArrayDeque<>();
         Deque<Double> numbers = new ArrayDeque<>();
-        Deque<Double> result = new ArrayDeque<>();
+        Stack<Double> result = new Stack<>();
 
         for (String t : tokens) {
             if (isOperator(t)) {
@@ -26,16 +26,18 @@ public class String_Op {
             }
             if (t.equals(Operators.parC.toString())) {
                 operators.pop();
-                while (operators.peek() != Operators.parO) {
+                while (!operators.isEmpty() && operators.peek() != Operators.parO) {
                     double op2 = numbers.pop();
                     double op1 = numbers.pop();
                     double res = mathematical_op.evaluate(op1, op2, operators.pop());
                     result.push(res);
-                    if (numbers.size()==1){
-                        handleNumberOutsideParentheses(numbers,result);
+                    if (numbers.size()>=1){
+                        handleNumberOutsideParentheses(numbers,result,operators);
                     }
                 }
-                operators.pop();
+                if(!operators.isEmpty()){
+                    operators.pop();
+                }
             }
         }
         result.forEach(numbers::push);
@@ -73,11 +75,24 @@ public class String_Op {
         return String.valueOf(numbers.pop());
     }
 
-    void handleNumberOutsideParentheses(Deque<Double>numbers, Deque<Double>result){
+    void handleNumberOutsideParentheses(Deque<Double>numbers, Stack<Double>result, Deque<Operators>operators){
+        if(numbers.size()==1) {
             double op2 = numbers.pop();
             double op1 = result.pop();
             double res = mathematical_op.evaluate(op1, op2, Operators.mul);
             result.push(res);
+        }else if (numbers.size()>1 && operators.size()>1) {
+            operators.pop();
+            double op2 = numbers.pop();
+            double op1 = result.pop();
+            double res = mathematical_op.evaluate(op1, op2, Operators.mul);
+            result.push(res);
+            double op3 = numbers.pop();
+            double res2 = mathematical_op.evaluate(op3,result.pop(),operators.pop());
+            result.push(res2);
+
+
+        }
     }
     Deque<Double> getNumbers(String[] tokens) {
         Deque<Double> numbers = new ArrayDeque<>();
