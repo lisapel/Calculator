@@ -19,7 +19,7 @@ public class String_Op {
     protected String deleteAll(String text) {
         return text.substring(0, 0);
     }
-
+    // Method to parse an expression string into tokens, evaluate them, and return the result as a string
     protected String parseExpressionToTokens(String expression) {
         String[] tokens = expression.split("(?<=[-+*/%√^()])|(?=[-+*/%√^()])");
         if (containsInvalidTokens(tokens)) {
@@ -29,6 +29,7 @@ public class String_Op {
         }
     }
 
+    // Method to parse an array of tokens and evaluate them, returning the result as a double
     protected Double parseAndEvaluate(String[] tokens) {
         for (String t : tokens) {
             if (isOperator(t)) {
@@ -36,41 +37,49 @@ public class String_Op {
             } else if (!isOperator(t)) {
                 numbers.push(Double.parseDouble(t));
             }
-            if (t.equals(Operators.parC.toString())) {
+            // If the token is a closing parenthesis, evaluate the expression inside the parentheses
+            if (t.equals(Operators.closingParenthesis.toString())) {
+                // Pop operators and numbers until the matching opening parenthesis is found
                 operators.pop();
-                while (!operators.isEmpty() && operators.peek() != Operators.parO) {
+                while (!operators.isEmpty() && operators.peek() != Operators.openingParenthesis) {
+                    // Evaluate the topmost operator and two numbers and push the result onto the result stack
                     result.push(mathematical_op.operate(numbers, operators));
                     if (numbers.size() >= 1) {
-                        handleNumberOutsideParentheses(numbers, result, operators);
+                        // If there are still numbers left on the numbers stack, evaluate
+                        handleOperandOutsideParentheses(numbers, result, operators);
                     }
                 }
+                // Pop the opening parenthesis
                 if (!operators.isEmpty()) {
                     operators.pop();
                 }
             }
         }
 
+        // After all tokens have been processed, evaluate any remaining operators and numbers
         while (!result.isEmpty()) {
             numbers.addLast(result.pop());
         }
-
         while (!operators.isEmpty()) {
             Operators op = operators.pop();
 
             if (op == Operators.sqrt) {
                 numbers.push(mathematical_op.evaluate(numbers.pop(), 0, op));
             } else if (operators.size() > 1) {
-                while (!numbers.isEmpty() && op != Operators.parO) {
+                // If there are still more operators left, evaluate them according to their precedence
+                while (!numbers.isEmpty() && op != Operators.openingParenthesis) {
                     assert operators.peekLast() != null;
                     if ((mathematical_op.hasPrecedence(op, operators.peekLast()))) break;
                     numbers.push(mathematical_op.operate(numbers, operators));
                 }
             } else {
+                // If there is only one operator left, evaluate it with two operands
                 double op2 = numbers.pop();
                 double op1 = numbers.pop();
                 numbers.push(mathematical_op.evaluate(op1, op2, op));
             }
         }
+        // If there are still more than one number left, multiply them together
         while (numbers.size() > 1) {
             numbers.push(mathematical_op.evaluate(numbers.pop(), numbers.pop(), Operators.mul));
         }
@@ -79,7 +88,7 @@ public class String_Op {
     }
 
 
-   protected void handleNumberOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
+   protected void handleOperandOutsideParentheses(Deque<Double> numbers, Stack<Double> result, Deque<Operators> operators) {
         if (numbers.size() == 1) {
             double op2 = numbers.pop();
             double op1 = result.pop();

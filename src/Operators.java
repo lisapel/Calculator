@@ -5,8 +5,8 @@ public enum Operators {
     div(3),
     mul(3),
     mod(3),
-    parO (1),
-    parC(1),
+    openingParenthesis(1),
+    closingParenthesis(1),
     pow(2),
     sqrt(2);
 
@@ -27,8 +27,8 @@ public enum Operators {
             case mul -> "*";
             case mod -> "%";
             case div -> "/";
-            case parO -> "(";
-            case parC -> ")";
+            case openingParenthesis -> "(";
+            case closingParenthesis -> ")";
             case sqrt -> "√";
             case pow -> "^";
         };
@@ -41,8 +41,8 @@ public enum Operators {
             case "*" -> Operators.mul;
             case "%" -> Operators.mod;
             case "/" -> Operators.div;
-            case "(" -> Operators.parO;
-            case ")" -> Operators.parC;
+            case "(" -> Operators.openingParenthesis;
+            case ")" -> Operators.closingParenthesis;
             case "√" -> Operators.sqrt;
             case "^" -> Operators.pow;
             default -> Operators.fromString(s);

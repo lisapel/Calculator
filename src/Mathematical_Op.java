@@ -2,12 +2,12 @@ import java.util.Deque;
 
 public class Mathematical_Op {
 
-    final Operands addition = Double::sum;
-    final Operands subtraction = (a, b) -> a - b;
-    final Operands division = (a, b) -> a / b;
-    final Operands modulus = (a, b) -> a % b;
-    final Operands multiplication = (a, b) -> a * b;
-    final Operands pow = Math::pow;
+    final Operate addition = Double::sum;
+    final Operate subtraction = (a, b) -> a - b;
+    final Operate division = (a, b) -> a / b;
+    final Operate modulus = (a, b) -> a % b;
+    final Operate multiplication = (a, b) -> a * b;
+    final Operate pow = Math::pow;
 
     protected double evaluate(double a, double b, Operators token) {
         switch (token) {
